@@ -12,7 +12,7 @@ const Slider = () => {
   );
   const nextCard = () => {
     setTimeout(
-      () => setIndex(index < (byDateDesc.length ?? 0) -1 ? index + 1 : 0),
+      () => setIndex(index < (byDateDesc?.length ?? 0) -1 ? index + 1 : 0),
       5000
     );
   };
@@ -22,7 +22,7 @@ const Slider = () => {
   return (
     <div className="SlideCardList">
       {byDateDesc?.map((event, idx) => (
-        <React.Fragment key={event.title}>
+        <React.Fragment key={event.title}> 
           <div
             className={`SlideCard SlideCard--${
               index === idx ? "display" : "hide"
