@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useData } from "../../contexts/DataContext";
 import { getMonth } from "../../helpers/Date";
 
@@ -8,21 +8,22 @@ const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
   const byDateDesc = data?.focus.sort((evtA, evtB) =>
-    new Date(evtA.date) < new Date(evtB.date) ? 1 : -1
+    new Date(evtA.date) < new Date(evtB.date) ? 1 : -1,
   );
-  const nextCard = () => {
-    setTimeout(
-      () => setIndex(index < (byDateDesc?.length ?? 0) -1 ? index + 1 : 0),
-      5000
-    );
-  };
+
   useEffect(() => {
-    nextCard();
-  });
+    const interval = setInterval(() => {
+      setIndex((prevIndex) =>
+        prevIndex < byDateDesc.length - 1 ? prevIndex + 1 : 0,
+      );
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [byDateDesc]);
+
   return (
     <div className="SlideCardList">
       {byDateDesc?.map((event, idx) => (
-        <React.Fragment key={event.title}> 
+        <div key={event.title}>
           <div
             className={`SlideCard SlideCard--${
               index === idx ? "display" : "hide"
@@ -37,20 +38,22 @@ const Slider = () => {
               </div>
             </div>
           </div>
-          <div className="SlideCard__paginationContainer">
-            <div className="SlideCard__pagination">
-              {byDateDesc.map((evt, radioIdx) => (
-                <input
-                  key= {evt.title}
-                  type="radio"
-                  name="radio-button"
-                  checked={idx === radioIdx}
-                  readOnly
-                />
-              ))}
+          {index === idx && (
+            <div className="SlideCard__paginationContainer">
+              <div className="SlideCard__pagination">
+                {byDateDesc.map((evt, radioIdx) => (
+                  <input
+                    key={evt.title}
+                    type="radio"
+                    name="radio-button"
+                    checked={index === radioIdx}
+                    onChange={() => setIndex(radioIdx)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        </React.Fragment>
+          )}
+        </div>
       ))}
     </div>
   );
